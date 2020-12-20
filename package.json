@@ -1,0 +1,13 @@
+{
+  "name": "mearn-exercise-tracker",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/usmanghanidev/mear-stack-tracker.git",
+  "author": "usmanGhani16 <afro123737@gmail.com>",
+  "license": "MIT",
+  
+  "scripts": {
+    "push" : "git add . && git commit -m",
+    "postpush" : "git push --all"
+  }
+}
