@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import axios from 'axios';
 
 const Createxercise = () => {
   const [state, setState] = useState({
@@ -9,6 +8,7 @@ const Createxercise = () => {
     description: '',
     duration: 0,
     users: [],
+    date: new Date(),
   });
 
   const [date, setStartDate] = useState(new Date());
@@ -16,7 +16,21 @@ const Createxercise = () => {
   const history = useHistory();
 
   useEffect(() => {
-    setState({ ...state, username: 'test users', users: ['test users', 'usmanghani'] });
+    const getUsers = async () => {
+      try {
+        const { data } = await axios.get('http://localhost:5000/users');
+
+        setState({
+          ...state,
+          username: data[0].username,
+          users: data.map((user) => user.username),
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    getUsers();
   }, []);
 
   const onHandleChange = (ev) => {
@@ -27,7 +41,7 @@ const Createxercise = () => {
     setStartDate(date);
   };
 
-  const onHandleSubmit = (ev) => {
+  const onHandleSubmit = async (ev) => {
     ev.preventDefault();
     const { username, description, duration, users } = state;
     const exercise = {
@@ -38,7 +52,14 @@ const Createxercise = () => {
       users,
     };
 
-    console.log(exercise, 'EXERCISE ??');
+    console.log(exercise, 'exercise add');
+
+    try {
+      const { data } = await axios.post('http://localhost:5000/exercises/add', exercise);
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
 
     history.push('/');
   };
@@ -88,7 +109,8 @@ const Createxercise = () => {
         </div>
 
         <div className="form-group">
-          <label>Date: </label> <DatePicker select={date} onChange={(date) => onHandleDate(date)} />
+          <label>Date: </label>
+          <input type="date" value={date} name="date" onChange={onHandleChange} />
         </div>
         <button className="btn btn-primary" type="submit">
           Submit
